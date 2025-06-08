@@ -1,0 +1,22 @@
+{
+    "name": "Rajesh Kumar",
+    "age": 43,
+    "state": "Madhya Pradesh",
+    "land_holding_acres": 2.5,
+    "occupation": "farmer",
+    "farming_type": "organic",
+    "main_crops": [
+        "wheat",
+        "pulses"
+    ],
+    "owns_irrigation": true,
+    "needs_credit": true,
+    "interested_in": [
+        "subsidy",
+        "insurance",
+        "organic_farming"
+    ],
+    "language": "Hindi",
+    "education_level": "secondary",
+    "annual_income": null
+}
