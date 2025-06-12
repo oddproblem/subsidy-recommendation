@@ -7,16 +7,33 @@ import json
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import re
+import os
+import subprocess
 
 app = FastAPI(title="Gov Subsidy ML Recommender API")
 
-# Load preprocessed assets
-vectorizer = load("vectorizer.joblib")
-X = load("tfidf_matrix.joblib")
-with open("cleaned_subsidies.json", "r") as f:
-    subsidies = json.load(f)
+# Load or train model assets
+def load_assets():
+    global vectorizer, X, subsidies
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    try:
+        vectorizer = load(os.path.join(BASE_DIR, "vectorizer.joblib"))
+        X = load(os.path.join(BASE_DIR, "tfidf_matrix.joblib"))
+        with open(os.path.join(BASE_DIR, "cleaned_subsidies.json"), "r") as f:
+            subsidies = json.load(f)
+    except Exception as e:
+        print(f"⚠️ Asset loading failed: {e}")
+        print("🔁 Attempting to run train_model.py to generate assets...")
+        subprocess.run(["python", os.path.join(BASE_DIR, "train_model.py")], check=True)
+        # Try loading again
+        vectorizer = load(os.path.join(BASE_DIR, "vectorizer.joblib"))
+        X = load(os.path.join(BASE_DIR, "tfidf_matrix.joblib"))
+        with open(os.path.join(BASE_DIR, "cleaned_subsidies.json"), "r") as f:
+            subsidies = json.load(f)
 
-# Reuse the preprocessing function
+load_assets()
+
+# Preprocessing function
 def preprocess(text: str):
     text = text.lower()
     text = re.sub(r"[^\w\s]", "", text)
